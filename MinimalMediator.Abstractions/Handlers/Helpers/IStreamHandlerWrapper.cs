@@ -10,8 +10,3 @@ public interface IStreamHandlerWrapper<in TRequest, out TResponse> where TReques
 {
     IAsyncEnumerable<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 }
-
-internal interface IStreamHandlerWrapper
-{
-    IAsyncEnumerable<object> Handle(IIdentifiableRequest request, CancellationToken cancellationToken);
-}

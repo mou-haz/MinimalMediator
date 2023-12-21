@@ -1,8 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MinimalMediator.Abstractions.Messages;
-
-namespace MinimalMediator.Abstractions.Handlers.Helpers;
+﻿namespace MinimalMediator.Handlers;
 
 internal interface IRequestHandler
 {
