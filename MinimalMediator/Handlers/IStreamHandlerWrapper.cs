@@ -1,6 +1,6 @@
 ﻿namespace MinimalMediator.Handlers;
 
-internal interface IStreamHandlerWrapper
+internal interface IStreamHandlerWrapper<out TResponse>
 {
-    IAsyncEnumerable<object> Handle(IIdentifiableRequest request, CancellationToken cancellationToken);
+    IAsyncEnumerable<TResponse> Handle(IIdentifiableRequest request, CancellationToken cancellationToken);
 }

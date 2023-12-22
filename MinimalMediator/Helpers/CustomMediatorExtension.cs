@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
 using MinimalMediator.Abstractions.LazyHelpers;
-using MinimalMediator.Mediator;
 
 namespace MinimalMediator.Helpers;
 
-public static class CustomMediatorExtension
+public static class MinimalMediatorExtension
 {
-    public static void AddCustomMediator(this IServiceCollection serviceDescriptors,
+    public static void AddMinimalMediator(this IServiceCollection serviceDescriptors,
         Func<Type, bool>? typeFilter = null, bool registerInfrastructure = false,
         ServiceLifetime serviceLifetime = ServiceLifetime.Scoped, Assembly[] assemblies = null)
     {
-        var customMediatorOpenTypes = new[]
+        var minimalMediatorOpenTypes = new[]
         {
             typeof(IRequestHandlerBase<>),
             typeof(IRequestHandlerBase<,>),
@@ -40,9 +39,9 @@ public static class CustomMediatorExtension
         {
             serviceDescriptors.AddSingleton(typeof(LazyRequestHandler<>), typeof(LazyRequestHandler<>));
 
-            registerationMethod(typeof(IMediator), typeof(CustomMediator));
+            registerationMethod(typeof(IMediator), typeof(Mediator.MinimalMediator));
 
-            registerationMethod(typeof(CustomMediator), typeof(CustomMediator));
+            registerationMethod(typeof(Mediator.MinimalMediator), typeof(Mediator.MinimalMediator));
 
             registerationMethod(typeof(IHandlerWrapper<>), typeof(HandlerWrapper<>));
             registerationMethod(typeof(HandlerWrapper<>), typeof(HandlerWrapper<>));
@@ -73,7 +72,7 @@ public static class CustomMediatorExtension
 
                 var genericInterface = interfaceType.GetGenericTypeDefinition();
 
-                if (customMediatorOpenTypes.Contains(genericInterface))
+                if (minimalMediatorOpenTypes.Contains(genericInterface))
                 {
                     registerationMethod(interfaceType, type);
                     registerType = true;

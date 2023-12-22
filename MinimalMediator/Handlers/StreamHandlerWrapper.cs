@@ -1,9 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using MinimalMediator.Helpers;
+﻿using MinimalMediator.Helpers;
 
 namespace MinimalMediator.Handlers;
 
-public sealed class StreamHandlerWrapper<TRequest, TResponse> : IStreamHandlerWrapper, IStreamHandlerWrapper<TRequest, TResponse> where TRequest : IStreamRequestBase<TResponse>
+public sealed class StreamHandlerWrapper<TRequest, TResponse> : IStreamHandlerWrapper<TResponse>, IStreamHandlerWrapper<TRequest, TResponse> where TRequest : IStreamRequestBase<TResponse>
 {
     private readonly HandlerForStreamDelegate<TRequest, TResponse> _rootHandler;
 
@@ -29,11 +28,8 @@ public sealed class StreamHandlerWrapper<TRequest, TResponse> : IStreamHandlerWr
         return _rootHandler(request, cancellationToken);
     }
 
-    async IAsyncEnumerable<object> IStreamHandlerWrapper.Handle(IIdentifiableRequest request, [EnumeratorCancellation] CancellationToken cancellationToken)
+    IAsyncEnumerable<TResponse> IStreamHandlerWrapper<TResponse>.Handle(IIdentifiableRequest request, CancellationToken cancellationToken)
     {
-        await foreach (var item in Handle((TRequest)request, cancellationToken))
-        {
-            yield return item;
-        }
+        return Handle((TRequest)request, cancellationToken);
     }
 }

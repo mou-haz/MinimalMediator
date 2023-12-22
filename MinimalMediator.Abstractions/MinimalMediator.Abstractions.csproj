@@ -4,6 +4,12 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
 	<LangVersion>12.0</LangVersion>
+	<Authors>Mohamed Hazem</Authors>
+	<PackageProjectUrl>https://github.com/mouhamedhazem149/MinimalMediator</PackageProjectUrl>
+	<PackageLicenseUrl>https://mit-license.org</PackageLicenseUrl>
+	<RepositoryUrl>https://github.com/mouhamedhazem149/MinimalMediator</RepositoryUrl>
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+	<PackageId>MinimalSoft.MinimalMediator.Abstractions</PackageId>
   </PropertyGroup>
 
 </Project>

@@ -18,7 +18,10 @@ public abstract record RequestBase : IRequestBase
     }
 
     /// <inheritdoc/>
-    public Guid RequestId { get; private set; }
+    public Guid RequestId
+    {
+        get; private set;
+    }
 }
 
 /// <summary>
@@ -39,5 +42,8 @@ public abstract record RequestBase<TResult> : IRequestBase<TResult>
     }
 
     /// <inheritdoc/>
-    public Guid RequestId { get; private set; }
+    public Guid RequestId
+    {
+        get; private set;
+    }
 }

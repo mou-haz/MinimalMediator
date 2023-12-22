@@ -3,7 +3,6 @@
 .vs/*
 *.obj
 
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
