@@ -10,6 +10,7 @@
 	<PackageLicenseUrl>https://mit-license.org</PackageLicenseUrl>
 	<RepositoryUrl>https://github.com/mouhamedhazem149/MinimalMediator</RepositoryUrl>
 	<AssemblyVersion>1.0.0</AssemblyVersion>
+	<Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

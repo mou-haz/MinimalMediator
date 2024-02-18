@@ -72,7 +72,7 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
         //using the internal call here cause poor performance
         request.ThrowIfNull(nameof(request));
 
-        if (RequestHandlers.TryGetValue(request.GetType(), out var handler))
+        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton && RequestHandlers.TryGetValue(request.GetType(), out var handler))
         {
             return ((IRequestHandlerWithReturn<TResponse>)handler).Handle(request, cancellationToken);
         }
@@ -82,7 +82,10 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
 
         handler.ThrowIfNull(nameof(handler));
 
-        RequestHandlers.TryAdd(request.GetType(), handler);
+        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton)
+        {
+            RequestHandlers.TryAdd(request.GetType(), handler);
+        }
 
         return ((IRequestHandlerWithReturn<TResponse>)handler).Handle(request, cancellationToken);
     }
@@ -107,7 +110,7 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
         //using the internal call here cause poor performance
         request.ThrowIfNull(nameof(request));
 
-        if (RequestHandlers.TryGetValue(request.GetType(), out var handler))
+        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton && RequestHandlers.TryGetValue(request.GetType(), out var handler))
         {
             return ((IStreamHandlerWrapper<TResponse>)handler).Handle(request, cancellationToken);
         }
@@ -117,7 +120,10 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
 
         handler.ThrowIfNull(nameof(handler));
 
-        RequestHandlers.TryAdd(request.GetType(), handler);
+        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton)
+        {
+            RequestHandlers.TryAdd(request.GetType(), handler);
+        }
 
         return ((IStreamHandlerWrapper<TResponse>)handler).Handle(request, cancellationToken);
     }
@@ -126,7 +132,7 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
     {
         requestType.ThrowIfNull(nameof(requestType));
 
-        if (RequestHandlers.TryGetValue(requestType, out var handler))
+        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton && RequestHandlers.TryGetValue(requestType, out var handler))
         {
             return (THandler)handler;
         }
@@ -137,7 +143,10 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
 
         handler.ThrowIfNull(nameof(handler));
 
-        RequestHandlers.TryAdd(requestType, handler);
+        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton)
+        {
+            RequestHandlers.TryAdd(requestType, handler);
+        }
 
         return (THandler)handler;
     }

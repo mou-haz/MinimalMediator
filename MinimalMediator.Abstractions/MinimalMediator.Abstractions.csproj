@@ -10,6 +10,7 @@
 	<RepositoryUrl>https://github.com/mouhamedhazem149/MinimalMediator</RepositoryUrl>
 	<AssemblyVersion>1.0.0</AssemblyVersion>
 	<PackageId>MinimalSoft.MinimalMediator.Abstractions</PackageId>
+	<Version>1.1.0</Version>
   </PropertyGroup>
 
 </Project>

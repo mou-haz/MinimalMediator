@@ -5,9 +5,11 @@ namespace MinimalMediator.Helpers;
 
 public static class MinimalMediatorExtension
 {
+    internal static ServiceLifetime DefaultLifeTime = ServiceLifetime.Scoped;
+
     public static void AddMinimalMediator(this IServiceCollection serviceDescriptors,
         Func<Type, bool>? typeFilter = null, bool registerInfrastructure = false,
-        ServiceLifetime serviceLifetime = ServiceLifetime.Scoped, Assembly[] assemblies = null)
+        ServiceLifetime serviceLifetime = ServiceLifetime.Scoped, params Assembly[] assemblies)
     {
         var minimalMediatorOpenTypes = new[]
         {
@@ -37,6 +39,8 @@ public static class MinimalMediatorExtension
 
         if (registerInfrastructure)
         {
+            DefaultLifeTime = serviceLifetime;
+
             serviceDescriptors.AddSingleton(typeof(LazyRequestHandler<>), typeof(LazyRequestHandler<>));
 
             registerationMethod(typeof(IMediator), typeof(Mediator.MinimalMediator));
