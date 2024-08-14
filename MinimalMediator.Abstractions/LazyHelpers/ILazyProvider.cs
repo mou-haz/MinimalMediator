@@ -2,8 +2,5 @@
 
 public interface ILazyProvider
 {
-    object? Value
-    {
-        get;
-    }
+    object? Value { get; }
 }

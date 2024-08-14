@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using System.Threading;
-using MinimalMediator.Abstractions.Messages;
 using MinimalMediator.Abstractions.Messages.Streams;
 
 namespace MinimalMediator.Abstractions.Handlers.Helpers;
