@@ -20,7 +20,6 @@ public sealed class HandlerWrapper<TRequest> : IRequestHandler, IHandlerWrapper<
     public ValueTask Handle(TRequest request, CancellationToken cancellationToken = default)
     {
         request.ThrowIfNull(nameof(request));
-
         return _finalHandler(request, cancellationToken);
     }
 

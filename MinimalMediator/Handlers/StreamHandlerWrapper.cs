@@ -27,7 +27,6 @@ public sealed class StreamHandlerWrapper<TRequest, TResponse> : IStreamHandlerWr
     public IAsyncEnumerable<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
     {
         request.ThrowIfNull(nameof(request));
-
         return _rootHandler(request, cancellationToken);
     }
 

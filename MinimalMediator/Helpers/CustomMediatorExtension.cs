@@ -56,7 +56,7 @@ public static class MinimalMediatorExtension
             registerationMethod(typeof(StreamHandlerWrapper<,>), typeof(StreamHandlerWrapper<,>));
             registerationMethod(typeof(IStreamHandlerWrapper<,>), typeof(StreamHandlerWrapper<,>));
         }
-
+        
         void RegisterType(Type type)
         {
             if (typeFilter is not null && !typeFilter(type))
