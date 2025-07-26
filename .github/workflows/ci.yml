@@ -22,5 +22,4 @@ jobs:
         uses: "./.github/steps/install_dependencies"
 
       - name: Build MinimalMediator
-        shell: cmd
         run: dotnet build -c Release
