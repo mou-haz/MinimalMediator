@@ -56,9 +56,6 @@ namespace MinimalMediator.Mediator;
 */
 public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediator
 {
-    private static readonly ConcurrentDictionary<Type, object> RequestHandlers = new();
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-
     public ValueTask<TResponse> Send<TRequest, TResponse>(TRequest request,
         CancellationToken cancellationToken = default) where TRequest : IRequestBase<TResponse>
     {
@@ -72,20 +69,14 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
         //using the internal call here cause poor performance
         request.ThrowIfNull(nameof(request));
 
-        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton && RequestHandlers.TryGetValue(request.GetType(), out var handler))
-        {
-            return ((IRequestHandlerWithReturn<TResponse>)handler).Handle(request, cancellationToken);
-        }
-
-        handler = _serviceProvider.GetRequiredService(
+        var handler = serviceProvider.GetRequiredService(
             typeof(HandlerWrapper<,>).MakeGenericType(request.GetType(), typeof(TResponse)));
 
-        handler.ThrowIfNull(nameof(handler));
-
-        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton)
-        {
-            RequestHandlers.TryAdd(request.GetType(), handler);
-        }
+        handler.ThrowIfNull(nameof(handler)
+#if DEBUG
+            , $"[{nameof(MinimalMediator)}]: Couldn't find handler for request of type {request.GetType().Name}"
+#endif
+        );
 
         return ((IRequestHandlerWithReturn<TResponse>)handler).Handle(request, cancellationToken);
     }
@@ -110,20 +101,14 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
         //using the internal call here cause poor performance
         request.ThrowIfNull(nameof(request));
 
-        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton && RequestHandlers.TryGetValue(request.GetType(), out var handler))
-        {
-            return ((IStreamHandlerWrapper<TResponse>)handler).Handle(request, cancellationToken);
-        }
-
-        handler = _serviceProvider.GetRequiredService(
+        var handler = serviceProvider.GetRequiredService(
             typeof(StreamHandlerWrapper<,>).MakeGenericType(request.GetType(), typeof(TResponse)));
 
-        handler.ThrowIfNull(nameof(handler));
-
-        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton)
-        {
-            RequestHandlers.TryAdd(request.GetType(), handler);
-        }
+        handler.ThrowIfNull(nameof(handler)
+#if DEBUG
+            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find stream handler for request of type {request.GetType().Name}"
+#endif
+        );
 
         return ((IStreamHandlerWrapper<TResponse>)handler).Handle(request, cancellationToken);
     }
@@ -132,21 +117,114 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
     {
         requestType.ThrowIfNull(nameof(requestType));
 
-        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton && RequestHandlers.TryGetValue(requestType, out var handler))
+        var handler = handlerType is null
+            ? serviceProvider.GetRequiredService<THandler>()
+            : (THandler)serviceProvider.GetRequiredService(handlerType);
+
+        handler.ThrowIfNull(nameof(handler)
+#if DEBUG
+            , $"[{nameof(MinimalMediator)}]: Couldn't find handler for request of type {requestType}"
+#endif
+        );
+
+        return handler;
+    }
+}
+
+public sealed class SingeltonMinimalMediator(IServiceProvider serviceProvider) : IMediator
+{
+    private static readonly ConcurrentDictionary<Type, object> RequestHandlers = new();
+
+    public ValueTask<TResponse> Send<TRequest, TResponse>(TRequest request,
+        CancellationToken cancellationToken = default) where TRequest : IRequestBase<TResponse>
+    {
+        return InternalGetOrAddHandler<HandlerWrapper<TRequest, TResponse>>(request.GetType())
+            .Handle(request, cancellationToken);
+    }
+
+    public ValueTask<TResponse> Send<TResponse>(IRequestBase<TResponse> request,
+        CancellationToken cancellationToken = default)
+    {
+        //using the internal call here cause poor performance
+        request.ThrowIfNull(nameof(request));
+
+        if (RequestHandlers.TryGetValue(request.GetType(), out var handler))
+        {
+            return ((IRequestHandlerWithReturn<TResponse>)handler).Handle(request, cancellationToken);
+        }
+
+        handler = serviceProvider.GetRequiredService(
+            typeof(HandlerWrapper<,>).MakeGenericType(request.GetType(), typeof(TResponse)));
+
+        handler.ThrowIfNull(nameof(handler)
+#if DEBUG
+            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find handler for stream of type {request.GetType().Name}"
+#endif
+        );
+
+        RequestHandlers.TryAdd(request.GetType(), handler);
+        return ((IRequestHandlerWithReturn<TResponse>)handler).Handle(request, cancellationToken);
+    }
+
+    public ValueTask Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
+        where TRequest : IRequestBase
+    {
+        return InternalGetOrAddHandler<HandlerWrapper<TRequest>>(request.GetType())
+            .Handle(request, cancellationToken);
+    }
+
+    public IAsyncEnumerable<TResponse> CreateStream<TRequest, TResponse>(TRequest request,
+        CancellationToken cancellationToken = default) where TRequest : IStreamRequestBase<TResponse>
+    {
+        return InternalGetOrAddHandler<StreamHandlerWrapper<TRequest, TResponse>>(request.GetType())
+            .Handle(request, cancellationToken);
+    }
+
+    public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequestBase<TResponse> request,
+        CancellationToken cancellationToken = default)
+    {
+        //using the internal call here cause poor performance
+        request.ThrowIfNull(nameof(request));
+
+        if (RequestHandlers.TryGetValue(request.GetType(), out var handler))
+        {
+            return ((IStreamHandlerWrapper<TResponse>)handler).Handle(request, cancellationToken);
+        }
+
+        handler = serviceProvider.GetRequiredService(
+            typeof(StreamHandlerWrapper<,>).MakeGenericType(request.GetType(), typeof(TResponse)));
+
+        handler.ThrowIfNull(nameof(handler)
+#if DEBUG
+            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find stream handler for stream of type {request.GetType().Name}"
+#endif
+        );
+
+        RequestHandlers.TryAdd(request.GetType(), handler);
+        return ((IStreamHandlerWrapper<TResponse>)handler).Handle(request, cancellationToken);
+    }
+
+    private THandler InternalGetOrAddHandler<THandler>(Type requestType, Type? handlerType = null)
+        where THandler : notnull
+    {
+        requestType.ThrowIfNull(nameof(requestType));
+
+        if (RequestHandlers.TryGetValue(requestType, out var handler))
         {
             return (THandler)handler;
         }
 
         handler = handlerType is null
-            ? _serviceProvider.GetRequiredService<THandler>()
-            : (THandler)_serviceProvider.GetRequiredService(handlerType);
+            ? serviceProvider.GetRequiredService<THandler>()
+            : (THandler)serviceProvider.GetRequiredService(handlerType);
 
-        handler.ThrowIfNull(nameof(handler));
+        handler.ThrowIfNull(nameof(handler)
+            #if DEBUG
+            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find handler for request of type {requestType}"
+            #endif
+            );
 
-        if (MinimalMediatorExtension.DefaultLifeTime == ServiceLifetime.Singleton)
-        {
-            RequestHandlers.TryAdd(requestType, handler);
-        }
+        RequestHandlers.TryAdd(requestType, handler);
 
         return (THandler)handler;
     }

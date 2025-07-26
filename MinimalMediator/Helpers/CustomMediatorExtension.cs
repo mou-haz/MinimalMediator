@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using MinimalMediator.Abstractions.LazyHelpers;
+using MinimalMediator.Mediator;
 
 namespace MinimalMediator.Helpers;
 
@@ -21,7 +22,7 @@ public static class MinimalMediatorExtension
             typeof(IInterceptStreamPipeline<,>),
         };
 
-        Func<Type, Type, IServiceCollection> registerationMethod = serviceLifetime switch
+        Func<Type, Type, IServiceCollection> registrationMethod = serviceLifetime switch
         {
             ServiceLifetime.Singleton => serviceDescriptors.AddSingleton,
             ServiceLifetime.Transient => serviceDescriptors.AddTransient,
@@ -43,20 +44,27 @@ public static class MinimalMediatorExtension
 
             serviceDescriptors.AddSingleton(typeof(LazyRequestHandler<>), typeof(LazyRequestHandler<>));
 
-            registerationMethod(typeof(IMediator), typeof(Mediator.MinimalMediator));
+            var concreteMediatorType = serviceLifetime switch
+            {
+                ServiceLifetime.Singleton => typeof(SingeltonMinimalMediator),
+                _ => typeof(Mediator.MinimalMediator)
+            };
 
-            registerationMethod(typeof(Mediator.MinimalMediator), typeof(Mediator.MinimalMediator));
+            registrationMethod(typeof(IMediator), concreteMediatorType);
+            
+            registrationMethod(typeof(Mediator.MinimalMediator), typeof(Mediator.MinimalMediator));
+            registrationMethod(typeof(SingeltonMinimalMediator), typeof(SingeltonMinimalMediator));
 
-            registerationMethod(typeof(IHandlerWrapper<>), typeof(HandlerWrapper<>));
-            registerationMethod(typeof(HandlerWrapper<>), typeof(HandlerWrapper<>));
+            registrationMethod(typeof(IHandlerWrapper<>), typeof(HandlerWrapper<>));
+            registrationMethod(typeof(HandlerWrapper<>), typeof(HandlerWrapper<>));
 
-            registerationMethod(typeof(IHandlerWrapper<,>), typeof(HandlerWrapper<,>));
-            registerationMethod(typeof(HandlerWrapper<,>), typeof(HandlerWrapper<,>));
+            registrationMethod(typeof(IHandlerWrapper<,>), typeof(HandlerWrapper<,>));
+            registrationMethod(typeof(HandlerWrapper<,>), typeof(HandlerWrapper<,>));
 
-            registerationMethod(typeof(StreamHandlerWrapper<,>), typeof(StreamHandlerWrapper<,>));
-            registerationMethod(typeof(IStreamHandlerWrapper<,>), typeof(StreamHandlerWrapper<,>));
+            registrationMethod(typeof(StreamHandlerWrapper<,>), typeof(StreamHandlerWrapper<,>));
+            registrationMethod(typeof(IStreamHandlerWrapper<,>), typeof(StreamHandlerWrapper<,>));
         }
-        
+
         void RegisterType(Type type)
         {
             if (typeFilter is not null && !typeFilter(type))
@@ -78,14 +86,14 @@ public static class MinimalMediatorExtension
 
                 if (minimalMediatorOpenTypes.Contains(genericInterface))
                 {
-                    registerationMethod(interfaceType, type);
+                    registrationMethod(interfaceType, type);
                     registerType = true;
                 }
             }
 
             if (registerType)
             {
-                registerationMethod(type, type);
+                registrationMethod(type, type);
             }
         }
     }
