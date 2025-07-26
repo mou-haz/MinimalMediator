@@ -1,0 +1,28 @@
+name: NuGet Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - name: Publish MinimalSoft.MinimalMediator.Abstractions
+      uses: mou-haz/GitHub-WorkFlows/.github/steps/package_publish@main
+      with:
+        token: ${{ secrets.GithubPackages_Key }}
+        repo_name: MinimalSoft.MinimalMediator.Abstractions
+        nuget_token: ${{ secrets.Nu_Key }}
+        github_packages_token: ${{ secrets.GithubPackages_Key }}
+
+    - name: Publish MinimalSoft.MinimalMediator
+      uses: mou-haz/GitHub-WorkFlows/.github/steps/package_publish@main
+      with:
+        token: ${{ secrets.GithubPackages_Key }}
+        repo_name: MinimalSoft.MinimalMediator
+        nuget_token: ${{ secrets.Nu_Key }}
+        github_packages_token: ${{ secrets.GithubPackages_Key }}

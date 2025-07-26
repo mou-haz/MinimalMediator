@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  push: {}
+
+  pull_request: {}
+
+env:
+  STEP_TIMEOUT_MINUTES: 60
+
+jobs:
+  smoke_test:
+    name: Release Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Dependencies
+        timeout-minutes: ${{ fromJSON(env.STEP_TIMEOUT_MINUTES) }}
+        uses: "./.github/steps/install_dependencies"
+
+      - name: Build MinimalMediator
+        shell: cmd
+        run: dotnet build -c Release
