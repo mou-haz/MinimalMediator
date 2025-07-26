@@ -57,11 +57,9 @@ namespace MinimalMediator.Mediator;
 public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediator
 {
     public ValueTask<TResponse> Send<TRequest, TResponse>(TRequest request,
-        CancellationToken cancellationToken = default) where TRequest : IRequestBase<TResponse>
-    {
-        return InternalGetOrAddHandler<HandlerWrapper<TRequest, TResponse>>(request.GetType())
+        CancellationToken cancellationToken = default) where TRequest : IRequestBase<TResponse> =>
+        InternalGetOrAddHandler<HandlerWrapper<TRequest, TResponse>>(request.GetType())
             .Handle(request, cancellationToken);
-    }
 
     public ValueTask<TResponse> Send<TResponse>(IRequestBase<TResponse> request,
         CancellationToken cancellationToken = default)
@@ -82,18 +80,14 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
     }
 
     public ValueTask Send<TRequest>(TRequest request, CancellationToken cancellationToken = default)
-        where TRequest : IRequestBase
-    {
-        return InternalGetOrAddHandler<HandlerWrapper<TRequest>>(request.GetType())
+        where TRequest : IRequestBase =>
+        InternalGetOrAddHandler<HandlerWrapper<TRequest>>(request.GetType())
             .Handle(request, cancellationToken);
-    }
 
     public IAsyncEnumerable<TResponse> CreateStream<TRequest, TResponse>(TRequest request,
-        CancellationToken cancellationToken = default) where TRequest : IStreamRequestBase<TResponse>
-    {
-        return InternalGetOrAddHandler<StreamHandlerWrapper<TRequest, TResponse>>(request.GetType())
+        CancellationToken cancellationToken = default) where TRequest : IStreamRequestBase<TResponse> =>
+        InternalGetOrAddHandler<StreamHandlerWrapper<TRequest, TResponse>>(request.GetType())
             .Handle(request, cancellationToken);
-    }
 
     public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequestBase<TResponse> request,
         CancellationToken cancellationToken = default)
@@ -106,7 +100,7 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
 
         handler.ThrowIfNull(nameof(handler)
 #if DEBUG
-            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find stream handler for request of type {request.GetType().Name}"
+            , $"[{nameof(SingletonMinimalMediator)}]: Couldn't find stream handler for request of type {request.GetType().Name}"
 #endif
         );
 
@@ -131,7 +125,7 @@ public sealed class MinimalMediator(IServiceProvider serviceProvider) : IMediato
     }
 }
 
-public sealed class SingeltonMinimalMediator(IServiceProvider serviceProvider) : IMediator
+public sealed class SingletonMinimalMediator(IServiceProvider serviceProvider) : IMediator
 {
     private static readonly ConcurrentDictionary<Type, object> RequestHandlers = new();
 
@@ -158,7 +152,7 @@ public sealed class SingeltonMinimalMediator(IServiceProvider serviceProvider) :
 
         handler.ThrowIfNull(nameof(handler)
 #if DEBUG
-            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find handler for stream of type {request.GetType().Name}"
+            , $"[{nameof(SingletonMinimalMediator)}]: Couldn't find handler for stream of type {request.GetType().Name}"
 #endif
         );
 
@@ -196,7 +190,7 @@ public sealed class SingeltonMinimalMediator(IServiceProvider serviceProvider) :
 
         handler.ThrowIfNull(nameof(handler)
 #if DEBUG
-            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find stream handler for stream of type {request.GetType().Name}"
+            , $"[{nameof(SingletonMinimalMediator)}]: Couldn't find stream handler for stream of type {request.GetType().Name}"
 #endif
         );
 
@@ -220,7 +214,7 @@ public sealed class SingeltonMinimalMediator(IServiceProvider serviceProvider) :
 
         handler.ThrowIfNull(nameof(handler)
             #if DEBUG
-            , $"[{nameof(SingeltonMinimalMediator)}]: Couldn't find handler for request of type {requestType}"
+            , $"[{nameof(SingletonMinimalMediator)}]: Couldn't find handler for request of type {requestType}"
             #endif
             );
 

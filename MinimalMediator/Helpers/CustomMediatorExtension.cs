@@ -46,14 +46,14 @@ public static class MinimalMediatorExtension
 
             var concreteMediatorType = serviceLifetime switch
             {
-                ServiceLifetime.Singleton => typeof(SingeltonMinimalMediator),
+                ServiceLifetime.Singleton => typeof(SingletonMinimalMediator),
                 _ => typeof(Mediator.MinimalMediator)
             };
 
             registrationMethod(typeof(IMediator), concreteMediatorType);
             
             registrationMethod(typeof(Mediator.MinimalMediator), typeof(Mediator.MinimalMediator));
-            registrationMethod(typeof(SingeltonMinimalMediator), typeof(SingeltonMinimalMediator));
+            registrationMethod(typeof(SingletonMinimalMediator), typeof(SingletonMinimalMediator));
 
             registrationMethod(typeof(IHandlerWrapper<>), typeof(HandlerWrapper<>));
             registrationMethod(typeof(HandlerWrapper<>), typeof(HandlerWrapper<>));
