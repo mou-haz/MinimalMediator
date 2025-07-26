@@ -20,7 +20,8 @@ jobs:
       uses: "./GitHub-WorkFlows/.github/steps/package_publish"
       with:
         token: ${{ secrets.GITHUBPACKAGES_KEY }}
-        repo_name: "MinimalSoft.MinimalMediator.Abstractions"
+        repo_name: "MinimalSoft.MinimalMediator"
+        pkg_name: "MinimalSoft.MinimalMediator.Abstractions"
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
 
@@ -29,6 +30,6 @@ jobs:
       with:
         token: ${{ secrets.GITHUBPACKAGES_KEY }}
         repo_name: "MinimalSoft.MinimalMediator"
+        pkg_name: "MinimalSoft.MinimalMediator"
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
-        
