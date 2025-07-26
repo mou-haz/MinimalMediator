@@ -18,6 +18,8 @@ jobs:
         repo_name: MinimalSoft.MinimalMediator.Abstractions
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUBPACKAGES_KEY }}
 
     - name: Publish MinimalSoft.MinimalMediator
       uses: mou-haz/GitHub-WorkFlows/.github/steps/package_publish@main
@@ -26,3 +28,5 @@ jobs:
         repo_name: MinimalSoft.MinimalMediator
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUBPACKAGES_KEY }}
