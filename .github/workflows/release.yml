@@ -24,4 +24,3 @@ jobs:
         pkg_name: "MinimalSoft.MinimalMediator.Abstractions,MinimalSoft.MinimalMediator"
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
-        
