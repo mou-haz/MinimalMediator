@@ -24,6 +24,11 @@ jobs:
         pkg_name: "MinimalSoft.MinimalMediator.Abstractions"
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
+    
+    - name: Clone Actions Repo
+      shell: bash
+      run: |
+        git clone https://${{ secrets.GithubPackages_Key }}@github.com/mou-haz/GitHub-WorkFlows
 
     - name: Publish MinimalSoft.MinimalMediator
       uses: "./GitHub-WorkFlows/.github/steps/package_publish"

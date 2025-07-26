@@ -5,9 +5,9 @@
     <Nullable>enable</Nullable>
 	<LangVersion>12.0</LangVersion>
 	<Authors>Mohamed Hazem</Authors>
-	<PackageProjectUrl>https://github.com/mouhamedhazem149/MinimalMediator</PackageProjectUrl>
+	<PackageProjectUrl>https://github.com/mou-haz/MinimalMediator</PackageProjectUrl>
 	<PackageLicenseUrl>https://mit-license.org</PackageLicenseUrl>
-	<RepositoryUrl>https://github.com/mouhamedhazem149/MinimalMediator</RepositoryUrl>
+	<RepositoryUrl>https://github.com/mou-haz/MinimalMediator</RepositoryUrl>
 	<AssemblyVersion>1.0.0</AssemblyVersion>
 	<PackageId>MinimalSoft.MinimalMediator.Abstractions</PackageId>
 	<Version>1.1.0</Version>
