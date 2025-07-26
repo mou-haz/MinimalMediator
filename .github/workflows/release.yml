@@ -14,15 +14,15 @@ jobs:
     - name: Publish MinimalSoft.MinimalMediator.Abstractions
       uses: mou-haz/GitHub-WorkFlows/.github/steps/package_publish@main
       with:
-        token: ${{ secrets.GithubPackages_Key }}
+        token: ${{ secrets.GITHUBPACKAGES_KEY }}
         repo_name: MinimalSoft.MinimalMediator.Abstractions
         nuget_token: ${{ secrets.Nu_Key }}
-        github_packages_token: ${{ secrets.GithubPackages_Key }}
+        github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
 
     - name: Publish MinimalSoft.MinimalMediator
       uses: mou-haz/GitHub-WorkFlows/.github/steps/package_publish@main
       with:
-        token: ${{ secrets.GithubPackages_Key }}
+        token: ${{ secrets.GITHUBPACKAGES_KEY }}
         repo_name: MinimalSoft.MinimalMediator
         nuget_token: ${{ secrets.Nu_Key }}
-        github_packages_token: ${{ secrets.GithubPackages_Key }}
+        github_packages_token: ${{ secrets.GITHUBPACKAGES_KEY }}
