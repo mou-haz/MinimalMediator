@@ -26,3 +26,4 @@ jobs:
         repo_name: MinimalSoft.MinimalMediator
         nuget_token: ${{ secrets.Nu_Key }}
         github_packages_token: ${{ secrets.GithubPackages_Key }}
+        
